@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>OEMath - Sharpen your brain</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="/css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/oemath.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  
+  <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
+
+    <!-- start header -->
+    <div id="header">
+        <div id="logo">
+            <h1>oeMath</h1>
+            <p>Sharpen your brain</p>
+        </div>
+        <div id="login-register"></div>
+    </div>
+    
+    
+    <!-- end header -->
+    <!-- start menu -->
+    <div id="menu">
+        <ul class="nav nav-pills" role="tablist">
+          <li><a href="/" role="tab">Home</a></li>
+          <li><a href="/reports/" role="tab">Reports</a></li>
+          <li><a href="/awards/" role="tab">Awards</a></li>
+          <li><a href="/about/" role="tab">About</a></li>
+        </ul>
+    </div>
+
+    <div><p id="test1"></p></div>
+
+    <!-- end menu -->
+    <!-- start page -->
+        <div id="page">
+            <ol class="breadcrumb">
+              <!--li><a href="#">Home</a></li>
+              <li><a href="#">Library</a></li-->
+              <li id = "bc-root" class="active"></li>
+            </ol>
+         
+        <div id="category-container">
+        </div>
+        
+	<!-- end content -->
+<!-- end page -->
+	<div id="login-register-dialog" title="Welcome to oeMath!" style="display:none">
+	    <div id="login-dialog" style="display:none">
+	        <p id="login-info"></p>
+	        <form>
+	            <fieldset>
+	                <label for="login-username">Username or email</label>
+	                <input type="text" id="login-username">
+	                <a id="login-forgot-username" href="#" onclick="forgotUsername()"><span class="oemath-link-hint">Forgot username?</span></a>
+	                <label for="login-password">Password</label>
+	                <input type="password" id="login-password">
+	                <a id="login-forgot-password" href="#" onclick="forgotUsername()"><span class="oemath-link-hint">Forgot password?</span></a>
+	                <br />
+	                <button id="login-login" type="button" class="btn btn-default" onclick="loginUser()">Sign in</button>
+	                <hr />
+	                <div>
+	                    Don't have a login? <a href="#" onclick="showRegisterDialog()"><span class="oemath-link-hint">Sign up</span></a>
+	                </div>
+	            </fieldset>
+	        </form>
+	    </div>
+	    <div id="register-dialog" style="display:none">
+	        <p id="register-info"></p>
+	        <form>
+	            <fieldset>
+	                <label for="register-username">User name</label>
+	                <input type="text" id="register-username">
+	                <label for="register-email">Email</label>
+	                <input type="text" id="register-email">
+	                <label for="register-password">Password</label>
+	                <input type="password" id="register-password">
+	                <label for="register-password-confirm">Confirm password</label>
+	                <input type="password" id="register-password-confirm">
+	                <br />
+	                <button id="register-register" type="button" class="btn btn-default" onclick="registerUser()">Sign up</button>
+	                <hr />
+	                <div>
+	                    Already have a login? <a href="#" onclick="showLoginDialog()"><span class="oemath-link-hint">Sign in</span></a>
+	                </div>
+	            </fieldset>
+	        </form>
+	    </div>
+	</div>
+
+
+    <div id="footer">
+        <p>&copy; 2014 oeMath.  All Rights Reserved.</p>
+    </div>
+
+  <script type="text/javascript" src="/js/oemath.js"></script>
+  <script type="text/javascript" src="./math.js"></script>
+
+</body>
+</html>

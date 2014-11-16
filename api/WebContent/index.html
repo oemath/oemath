@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>OEMath - Sharpen your brain</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="/css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/oemath.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+
+  <style>
+    label, input { display:block; }
+    input.text { margin-bottom:12px; width:95%; padding: .4em; }
+    fieldset { padding:0; border:0; margin-top:25px; }
+    h1 { font-size: 1.2em; margin: .6em 0; }
+    div#users-contain { width: 350px; margin: 20px 0; }
+    div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+    div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+    .ui-dialog .ui-state-error { padding: .3em; }
+    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+  </style>
+
+
+</head>
+
+<body>
+    
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
+
+	<!-- start header -->
+    <div id="header">
+        <div id="logo">
+            <h1>oeMath</h1>
+            <p>Sharpen your brain</p>
+        </div>
+        <div id="login-register"></div>
+    </div>
+
+
+	<!-- end header -->
+	<!-- start menu -->
+	<div id="menu">
+	<ul class="nav nav-pills" role="tablist">
+	  <li class='active'><a href="/" role="tab">Home</a></li>
+	  <li><a href="/reports/" role="tab">Reports</a></li>
+	  <li><a href="/awards/" role="tab">Awards</a></li>
+	  <li><a href="/about/" role="tab">About</a></li>
+	</ul>
+	</div>
+	
+	<p id="test1">this is for test</p>
+	
+	<!-- end menu -->
+	<!-- start page -->
+	<div id="page">
+		<!-- start content -->
+		<!--div id="content" class="tab-content"-->
+	   <div class="tab-pane active" id="home">
+	      <div class="oemath-panel">
+	        <h1 id="test"></h1>
+	        <div id="grade-1" class="oemath-grade-box">
+	            <div class="oemath-grade-box-banner">
+	                <p>Grade 1</p>
+	            </div>
+	            <div>
+	            
+	            </div>
+	            <a class="oemath-grade-link" href="/math?1"><span class="oemath-grade-link-text">See details...</span></a>
+	        </div>
+	
+	        <div id="grade-2" class="oemath-grade-box">
+	            <div class="oemath-grade-box-banner">
+	                <p>Grade 2</p>
+	            </div>
+	            <ul class="oemath-grade-list">
+	                <li>Clever calculation</li>
+	                <li>Counting</li>
+	                <li>Series</li>
+	                <li>Funny problems</li>
+	                <li>List attempt</li>
+	                <li>Enumeration</li>
+	                <li>More...</li>
+	            </ul>
+	
+	            <a class="oemath-grade-link" href="/math?2"><span class="oemath-grade-link-text">See details...</span></a>
+	        </div>
+	
+	        <div id="grade-3" class="oemath-grade-box">
+	            <div class="oemath-grade-box-banner">
+	                <p>Grade 3</p>
+	            </div>
+	            <div>
+	            
+	            </div>
+	            <a class="oemath-grade-link" href="/math?3"><span class="oemath-grade-link-text">See details...</span></a>
+	        </div>
+	        
+	        <div id="grade-4" class="oemath-grade-box">
+	            <div class="oemath-grade-box-banner">
+	                <p>Grade 4</p>
+	            </div>
+	            <div>
+	            
+	            </div>
+	            <a class="oemath-grade-link" href="/math?4"><span class="oemath-grade-link-text">See details...</span></a>
+	        </div>
+	
+	        <div id="grade-5" class="oemath-grade-box">
+	            <div class="oemath-grade-box-banner">
+	                <p>Grade 5</p>
+	            </div>
+	            <div>
+	            
+	            </div>
+	            <a class="oemath-grade-link" href="/math?5"><span class="oemath-grade-link-text">See details...</span></a>
+	        </div>
+	
+	        <div id="grade-6" class="oemath-grade-box">
+	            <div class="oemath-grade-box-banner">
+	                <p>Grade 6</p>
+	            </div>
+	            <div>
+	            
+	            </div>
+	            <a class="oemath-grade-link" href="/math?6"><span class="oemath-grade-link-text">See details...</span></a>
+	        </div>
+	
+	        <div id="grade-7" class="oemath-grade-box">
+	            <div class="oemath-grade-box-banner">
+	                <p>Grade 6</p>
+	            </div>
+	            <div>
+	            
+	            </div>
+	            <a class="oemath-grade-link" href="/math?7"><span class="oemath-grade-link-text">See details...</span></a>
+	        </div>
+	    </div>
+	  
+	  
+	</div>
+		<!-- end content -->
+	<!-- end page -->
+	
+	
+	
+	<div id="login-register-dialog" title="Welcome to oeMath!" style="display:none">
+	    <div id="login-dialog" style="display:none">
+	        <p id="login-info"></p>
+	        <form>
+	            <fieldset>
+	                <label for="login-username">Username or email</label>
+	                <input type="text" id="login-username">
+	                <a id="login-forgot-username" href="#" onclick="forgotUsername()"><span class="oemath-link-hint">Forgot username?</span></a>
+	                <label for="login-password">Password</label>
+	                <input type="password" id="login-password">
+	                <a id="login-forgot-password" href="#" onclick="forgotUsername()"><span class="oemath-link-hint">Forgot password?</span></a>
+	                <br />
+	                <button id="login-login" type="button" class="btn btn-default" onclick="loginUser()">Sign in</button>
+	                <hr />
+	                <div>
+	                    Don't have a login? <a href="#" onclick="showRegisterDialog()"><span class="oemath-link-hint">Sign up</span></a>
+	                </div>
+	            </fieldset>
+	        </form>
+	    </div>
+	    <div id="register-dialog" style="display:none">
+	        <p id="register-info"></p>
+	        <form>
+	            <fieldset>
+	                <label for="register-username">User name</label>
+	                <input type="text" id="register-username">
+	                <label for="register-email">Email</label>
+	                <input type="text" id="register-email">
+	                <label for="register-password">Password</label>
+	                <input type="password" id="register-password">
+	                <label for="register-password-confirm">Confirm password</label>
+	                <input type="password" id="register-password-confirm">
+	                <br />
+	                <button id="register-register" type="button" class="btn btn-default" onclick="registerUser()">Sign up</button>
+	                <hr />
+	                <div>
+	                    Already have a login? <a href="#" onclick="showLoginDialog()"><span class="oemath-link-hint">Sign in</span></a>
+	                </div>
+	            </fieldset>
+	        </form>
+	    </div>
+	</div>
+	
+	
+	
+	<div id="footer">
+	    <p>&copy; 2014 oeMath.  All Rights Reserved.</p>
+	</div>
+
+	<script type="text/javascript" src="/js/oemath.js"></script>
+	<script type="text/javascript" src="/js/oemath-home.js"></script>
+
+</body>
+</html>
+
+
+

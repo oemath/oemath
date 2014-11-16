@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Extended
+Description: A two-column, fixed-width, Web 2.0 design.
+Version    : 1.0
+Released   : 20070915
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>About OEMath - Sharpen your brain</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="/css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/oemath.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
+
+
+<!-- start header -->
+<div id="header">
+	<div id="logo">
+		<h1>oeMath</h1>
+		<p>Sharpen your brain</p>
+	</div>
+	<div id="search">
+		<form method="get" action="">
+			<fieldset>
+			<input id="s" type="text" name="s" value="" />
+			<input id="x" type="submit" value="Search" />
+			</fieldset>
+		</form>
+	</div>
+</div>
+<!-- end header -->
+<!-- start menu -->
+<div id="menu">
+<ul class="nav nav-pills" role="tablist">
+  <li><a href="/" role="tab">Home</a></li>
+  <li><a href="/reports/" role="tab">Reports</a></li>
+  <li class="active"><a href="/awards/" role="tab">Awards</a></li>
+  <li><a href="/about/" role="tab">About</a></li>
+</ul>
+</div>
+
+
+<!-- end menu -->
+<!-- start page -->
+<div id="page">
+    <h1>Awards</h1>
+<!-- end page -->
+
+
+<div id="footer">
+	<!--p>&copy;2007 All Rights Reserved.</p-->
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        var full_url = window.location.href;
+        var parts = full_url.split("#");
+        $("#test").html(full_url);
+        if (parts.length == 2) {
+            $('a[href="#' + parts[1] + '"]').parent().addClass('active');
+            /*$('.nav ul a').each(function() {
+                if ($(this).attr('href') == parts[1]) {
+                    $(this).parent().addClass('active');
+                }
+            }*/
+        }
+    });
+</script>
+</body>
+</html>

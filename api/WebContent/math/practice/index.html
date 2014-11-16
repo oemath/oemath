@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>OEMath - Sharpen your brain</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="/css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/oemath.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/oemath-problem.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/oemath.js"></script>
+    <script type="text/javascript" src="/js/oemath-problem.js"></script>
+
+
+<!-- start header -->
+    <div id="header">
+        <div id="logo">
+            <h1>oeMath</h1>
+            <p>Sharpen your brain</p>
+        </div>
+        <div id="login-register"></div>
+    </div>
+
+<!-- end header -->
+<!-- start menu -->
+<div id="menu">
+<ul class="nav nav-pills" role="tablist">
+  <li><a href="/" role="tab">Home</a></li>
+  <li><a href="/reports/" role="tab">Reports</a></li>
+  <li><a href="/awards/" role="tab">Awards</a></li>
+  <li><a href="/about/" role="tab">About</a></li>
+</ul>
+</div>
+
+
+<!-- end menu -->
+<!-- start page -->
+<div id="page">
+    <ol class="breadcrumb">
+      <!--li><a href="#">Home</a></li>
+      <li><a href="#">Library</a></li-->
+      <li><a id="bc-root"></a></li>
+      <li id="bc-practice" class="active">Practice</li>
+    </ol>
+</div>
+	<!-- end content -->
+<!-- end page -->
+<div><p id="test1"></p></div>
+
+<div id="oemath-practice-container">
+    <p id="oemath-problem-field"></p>
+    
+    <div id="oemath-answer-normal" style="display:none">
+        <span style="font-size:20px">Answer:<input type="text" id="oemath-answer-normal-field"></input><br></span>
+    </div>
+    
+    <div>
+        <div id="oemath-answer-choicegroup" style="display:none">
+        </div>
+    </div>
+    
+    <p id="oemath-problem-status"></p>
+    
+    <button id="oemath-problem-submit" class='btn btn-success oemath-problem-button' onclick='clickBtn(id)'>Submit</button>
+    <button id="oemath-problem-hint" class='btn btn-success oemath-problem-button' onclick='clickBtn(id)'>I need some hint</button>
+    <button id="oemath-problem-skip" class='btn btn-success oemath-problem-button' onclick='clickBtn(id)'>Skip for now</button>
+</div>
+
+<div id="oemath-review-container" style="display:none">
+    <div class="panel-group" id="accordion">
+    </div>
+
+    <div>
+        <button id="oemath-problem-finished" class='btn btn-success oemath-problem-button' onclick='clickFinish(id)'>Finish Review</button>
+    </div>
+
+</div>
+
+	<div id="login-register-dialog" title="Welcome to oeMath!" style="display:none">
+	    <div id="login-dialog" style="display:none">
+	        <p id="login-info"></p>
+	        <form>
+	            <fieldset>
+	                <label for="login-username">Username or email</label>
+	                <input type="text" id="login-username">
+	                <a id="login-forgot-username" href="#" onclick="forgotUsername()"><span class="oemath-link-hint">Forgot username?</span></a>
+	                <label for="login-password">Password</label>
+	                <input type="password" id="login-password">
+	                <a id="login-forgot-password" href="#" onclick="forgotUsername()"><span class="oemath-link-hint">Forgot password?</span></a>
+	                <br />
+	                <button id="login-login" type="button" class="btn btn-default" onclick="loginUser()">Sign in</button>
+	                <hr />
+	                <div>
+	                    Don't have a login? <a href="#" onclick="showRegisterDialog()"><span class="oemath-link-hint">Sign up</span></a>
+	                </div>
+	            </fieldset>
+	        </form>
+	    </div>
+	    <div id="register-dialog" style="display:none">
+	        <p id="register-info"></p>
+	        <form>
+	            <fieldset>
+	                <label for="register-username">User name</label>
+	                <input type="text" id="register-username">
+	                <label for="register-email">Email</label>
+	                <input type="text" id="register-email">
+	                <label for="register-password">Password</label>
+	                <input type="password" id="register-password">
+	                <label for="register-password-confirm">Confirm password</label>
+	                <input type="password" id="register-password-confirm">
+	                <br />
+	                <button id="register-register" type="button" class="btn btn-default" onclick="registerUser()">Sign up</button>
+	                <hr />
+	                <div>
+	                    Already have a login? <a href="#" onclick="showLoginDialog()"><span class="oemath-link-hint">Sign in</span></a>
+	                </div>
+	            </fieldset>
+	        </form>
+	    </div>
+	</div>
+
+<div id="footer">
+	<p>&copy; 2014 oeMath.  All Rights Reserved.</p>
+</div>
+
+<!-- Modal - Finish practice -->
+<div class="modal fade" id="oemath-review-modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header oemath-modal-header">
+        <!--button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button-->
+        <h4 class="modal-title" id="myModalLabel">Practice Summary</h4>
+      </div>
+      <div class="modal-body">
+        <p>Here's the summary of the practice:</p>
+        <div class="checkbox">
+            <div class="oemath-review-checkbox" style="color:green">
+              <input id="oemath-review-category-correct" type="checkbox" onclick="clickCheckbox(this)"></input>
+              <p id="oemath-review-category-correct-prompt"></p>
+            </div>
+            <div class="oemath-review-checkbox" style="color:red">
+              <input id="oemath-review-category-wrong" type="checkbox" checked onclick="clickCheckbox(this)"></input>
+              <p id="oemath-review-category-wrong-prompt"></p>
+            </div>
+            <div class="oemath-review-checkbox" style="color:blue">
+              <input id="oemath-review-category-skipped" type="checkbox" checked onclick="clickCheckbox(this)"></input>
+              <p id="oemath-review-category-skipped-prompt"></p>
+            </div>        
+        </div>
+        <p>Please select what you want to review.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="oemath-review-btn-review" class="btn btn-default" data-dismiss="modal" onclick="clickReview(this)">Review Selected</button>
+        <button type="button" class="btn"  data-dismiss="modal" onclick="clickFinish(this)">Finish Practice</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal - show answer in review -->
+<div class="modal fade" id="oemath-review-show-answer" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header oemath-modal-header">
+        <h4 class="modal-title" id="H1">Answer</h4>
+      </div>
+      <div class="modal-body">
+        <p id="oemath-review-answer"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn"  data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="./practice.js"></script>
+
+</body>
+</html>
