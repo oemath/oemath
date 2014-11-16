@@ -1,3 +1,6 @@
+// constants
+var	DEFAULT_INPUT_HEIGHT = 50;
+
 // http://stackoverflow.com/questions/502366/structs-in-javascript
 /*
 var o = {
@@ -91,10 +94,10 @@ function replace_input_tags_in_answer(answer) {
     answer = replace_oemath_image_tags(answer);
     answer = answer.replace(/\<oemath-input-(\d+)-(\d+)-*(\d*)\(([^\)]*)\)\>/g, function (m, $1, $2, $3, $4) {
         if ($3) {
-            return '<input type="text" class="oemath-image-input" style="top:' + $1 + 'px; left:' + $2 + 'px; width:' + $3 + 'px" value="'+$4+'">';
+            return '<input type="text" class="oemath-input-image" style="top:' + $1 + 'px; left:' + $2 + 'px; width:' + $3 + 'px" value="'+$4+'">';
         }
         else {
-            return '<input type="text" class="oemath-image-input" style="top:' + $1 + 'px; left:' + $2 + 'px" value="' + $4 + '">';
+            return '<input type="text" class="oemath-input-image" style="top:' + $1 + 'px; left:' + $2 + 'px" value="' + $4 + '">';
         }
     });
 
@@ -246,7 +249,7 @@ function replace_oemath_tags(prob, prob_index) {
         var new_input =
             '<input type="text" id="oemath-input-field-' +prob_index+ '-' +input_numbers+ '" ' +
             'oemath-hint="' +$4+ '" ' +
-            'class="oemath-image-input" style="left:' + x + 'px; top:' + y + 'px; ' +
+            'class="oemath-input-image" style="left:' + x + 'px; top:' + y + 'px; ' +
                 ($3 ? 'width:' + $3 + 'px" ' : '" ') +
             'placeholder="?">';
             
@@ -269,16 +272,15 @@ function replace_oemath_tags(prob, prob_index) {
     // <oemath-input(0) (10,10) width=100 class="oemath-inline-input"/>
     // <oemath-input(0) (10,10) class="oemath-inline-input"/>
     // <oemath-input(0) C#0(10) width=100 class="oemath-inline-input"/>
-    prob = prob.replace(/\<\s*oemath-input-inline\(([^\)])+\)\s+(\S+)\s+(width=\S+)*/g, function (m, $1, $2, $3) {
+    prob = prob.replace(/\<\s*oemath-input\(([^\)])+\)\s+(\S+)\s+(width=\S+)*/g, function (m, $1, $2, $3) {
         ++input_numbers;
 	
         var w;
         if ($3) {
             try { w = eval($3.split('=')[1]); } catch(e) { w = 50; }
         }
-        
         var start = $2.indexOf('(');
-        var end = $2.indexOd(')');
+        var end = $2.indexOf(')');
         if (start == 0) {
             var xy = $2.substring(start+1, end).split(',');
             var x = eval(xy[0]);
@@ -287,13 +289,13 @@ function replace_oemath_tags(prob, prob_index) {
         else {
             var cr = my_circles[$2.substr(0, start)];
             var p = p2c(cr.x, cr.y, cr.r, $2.substring(start+1, end));
-            var x = p.x - ($3 ? w : cr.r)/2;
-            var y = p.y - cr.r/2;
+            $("#test1").text($2.substr(0, start));
+            var x = p.x - ($3 ? w : DEFAULT_INPUT_HEIGHT) / 2;
+            var y = p.y - DEFAULT_INPUT_HEIGHT/2;
         }
-
         return '<input type="text" id="oemath-input-field-' +prob_index+ '-' +input_numbers+ 
                '" oemath-hint="' +$1+ '"' +
-               ' style="left:' +x+ 'px top:' +y+ ($3 ? 'px width:' +w : '') + 'px"' +
+               ' style="left:' +x+ 'px; top:' +y+ ($3 ? 'px; width:' +w : '') + 'px"' +
                ' class="oemath-input-image" placeholder="?"';
     });
     

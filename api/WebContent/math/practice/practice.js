@@ -129,13 +129,13 @@ function handleClick(radioButton) {
 function show_problem(data, prob_index) {
     var prob = data;
     
-/*    var testStr = prob.problem+"<br>"+prob.answer;
+    var testStr = prob.problem+"<br>"+prob.answer;
     if (prob.hint) {
     	for (var i=0; i<prob.hint.length; i++) {
     		testStr += ("<br>"+prob.hint[i].hid+" : "+prob.hint[i].desc);
     	}
     }
-    $("#test1").text(testStr);*/
+    $("#test1").text(testStr);
     // result 0=correct, 1=wrong or 2=skipped
     var problem = makeStruct("desc type answer answer_desc hints hint_level result entered inputs");
     var prob_desc = replace_oemath_tags(prob.problem, prob_index);
@@ -143,6 +143,8 @@ function show_problem(data, prob_index) {
     problem.inputs = prob_desc[1]; // number of input (edit box) in the problem.  For problem with type=2.
     problem.answer = problem.answer_desc = prob.answer.split('$$');
     problem.hints = [];
+//var testStr = problem.desc;
+//$("#test1").text(testStr);
 /*var testStr = "DESC:<br>"+problem.desc+"<br><br>ANSWER:<br>"+problem.answer[0];
 if (prob.hint) {
 	for (var i=0; i<prob.hint.length; i++) {
