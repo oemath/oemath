@@ -131,7 +131,7 @@ function parse_position(my_circles, str) {
 }
 
 
-function parse_prop(str, ch) {
+function parse_prop(str, filter, ch) {
     ch = typeof ch !== 'undefined' ? ch : '=';
     var prop = {};
     prop['fill'] = 'white';
@@ -144,7 +144,15 @@ function parse_prop(str, ch) {
             if (kv.length <= 1) {
                 kv = p[i].split(':');
             }
-            prop[kv[0]] = kv[1];
+            
+            if (filter) {
+                if (filter(kv[0], kv[1])) {
+                    prop[kv[0]] = kv[1];
+                }
+            }
+            else {
+                prop[kv[0]] = kv[1];                
+            }
         }
     }
 
@@ -192,6 +200,7 @@ function replace_oemath_tags(prob, prob_index) {
     // oemath-svg tags
     /////////////////////
     var my_circles = [];
+    var circle_inputs = '';
     
     // '<oemath-svg-500-500>'
     prob = prob.replace(/<\s*oemath-svg-([^-\s]+)-([^-\s>]+)/g, function(m, $1, $2) {
@@ -229,17 +238,32 @@ function replace_oemath_tags(prob, prob_index) {
 
     // <svg-circle[(props)] (C#(theta) r=100|C#)>
     prob = prob.replace(/<\s*svg-circle\(?([^\)\s]+)?\)?\s+([^\s>]+)([^>]*)>/g, function (m, $1, $2, $3) {
+        
+        var prop = parse_prop($1, function(k, v) {
+            if (k == 'hint') {
+                circle_inputs += '<svg-input(hint='+v+') '+$2+'>';
+                return false;
+            }
+            return true; // continue processing
+        });
+        
         if ($2.indexOf('(') >= 0) { // C#0(theta) r=<radius>
             var xy = parse_position(my_circles, $2);
             var radius = get_prop($3, 'r', DEFAULT_INPUT_RADIUS);
-            return '<circle cx='+xy.x+' cy='+xy.y+' r='+radius + parse_prop($1)+'/>';
+            return '<circle cx='+xy.x+' cy='+xy.y+' r='+radius + prop+'/>';
         }
         else { // C#: to show this circle
             var cr = my_circles[$2.trim()];
-            return '<circle cx='+cr.x+' cy='+cr.y+' r='+cr.r + parse_prop($1)+'/>';
+            return '<circle cx='+cr.x+' cy='+cr.y+' r='+cr.r + prop+'/>';
         }
     });
     
+
+    // inject circle inputs
+    prob = prob.replace(/(<foreignObject[^>]*>)/g, function(m, $1) {
+        return $1 + circle_inputs;
+    });
+
     // oemath-image-input tags
     var input_numbers = -1;
 
