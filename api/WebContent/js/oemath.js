@@ -122,7 +122,12 @@ function parse_position(my_circles, str) {
     var end = str.indexOf(')');
     if (start == 0) {
         var xy = str.substring(start+1, end).split(',');
-        return { x: eval(xy[0]), y: eval(xy[1]) };
+        if (xy.length == 2) {
+            return { x: eval(xy[0]), y: eval(xy[1]) };
+        }
+        else { // (cx,cy,radius,theta)
+            return p2c(xy[0], xy[1], xy[2], xy[3]);
+        }
     }
     else {
         var cr = my_circles[str.substr(0, start)];
@@ -229,7 +234,7 @@ function replace_oemath_tags(prob, prob_index) {
 
 
     // <svg-line(props) (x,y)|C#0(theta) (x,y)|C#0(theta)/>
-    prob = prob.replace(/<\s*svg-line\(([^\)]+)\)\s+(\S+)\s+([^>]+)>/g, function(m, $1, $2, $3) {
+    prob = prob.replace(/<\s*svg-line\(?([^\)\s]+)?\)?\s+(\S+)\s+([^>]+)>/g, function(m, $1, $2, $3) {
         var p1 = parse_position(my_circles, $2);
         var p2 = parse_position(my_circles, $3.trim());
         var ret = '<line x1='+p1.x+' y1='+p1.y+ ' x2='+p2.x+' y2='+p2.y+' class="oemath-svg"' + parse_prop($1) +'/>';
