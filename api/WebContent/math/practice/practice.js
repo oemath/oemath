@@ -100,7 +100,7 @@ function clickShowAnswer(id, idx) {
 //		$('#test1').text('show '+idx+' : '+prob.inputs);
 		for (var i=0; i<prob.inputs; i++) {
 			var this_input = $('#oemath-input-field-' +idx+ '-' +i);
-			this_input.val(this_input.attr('oemath-hint')).css('color', 'green');
+			this_input.val(this_input.attr('hint')).css('color', 'green');
 		}
 		parent_container.attr('oemath-hint-show', 'on');
 		$('#oemath-review-showanswer-'+idx).text('Show my answer');
@@ -129,13 +129,13 @@ function handleClick(radioButton) {
 function show_problem(data, prob_index) {
     var prob = data;
     
-    var testStr = prob.problem+"<br>"+prob.answer;
+/*    var testStr = prob.problem+"<br>"+prob.answer;
     if (prob.hint) {
     	for (var i=0; i<prob.hint.length; i++) {
     		testStr += ("<br>"+prob.hint[i].hid+" : "+prob.hint[i].desc);
     	}
     }
-    $("#test1").text(testStr);
+    $("#test1").text(testStr);*/
     // result 0=correct, 1=wrong or 2=skipped
     var problem = makeStruct("desc type answer answer_desc hints hint_level result entered inputs");
     var prob_desc = replace_oemath_tags(prob.problem, prob_index);
