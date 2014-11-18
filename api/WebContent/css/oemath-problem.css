@@ -24,6 +24,12 @@
 
 
 
+.oemath-svg-svg{
+    display: block;
+    margin: auto;
+    position: relative;	
+}
+
 .oemath-svg{
     position: relative;
     margin: 0 auto;

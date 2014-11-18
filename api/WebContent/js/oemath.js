@@ -123,15 +123,21 @@ function parse_position(my_circles, str) {
     if (start == 0) {
         var xy = str.substring(start+1, end).split(',');
         if (xy.length == 2) {
-            return { x: eval(xy[0]), y: eval(xy[1]) };
+            return { x: eval(xy[0]), y: eval(xy[1]), p: false };
         }
         else { // (cx,cy,radius,theta)
-            return p2c(xy[0], xy[1], xy[2], xy[3]);
+            var c = p2c(xy[0], xy[1], xy[2], xy[3]);
+            return { x: c.x, y : c.y, p : true };
         }
     }
-    else {
+    else if (start > 0) {
         var cr = my_circles[str.substr(0, start)];
-        return p2c(cr.x, cr.y, cr.r, str.substring(start+1, end));
+        var c = p2c(cr.x, cr.y, cr.r, str.substring(start+1, end));
+        return { x: c.x, y : c.y, p : true };
+    }
+    else {
+        var cr = my_circles[str];
+        return { x: cr.x, y: cr.y, p: true };
     }
 }
 
@@ -150,12 +156,7 @@ function parse_prop(str, filter, ch) {
                 kv = p[i].split(':');
             }
             
-            if (filter) {
-                if (filter(kv[0], kv[1])) {
-                    prop[kv[0]] = kv[1];
-                }
-            }
-            else {
+            if (!filter || filter(kv[0], kv[1])) {
                 prop[kv[0]] = kv[1];                
             }
         }
@@ -206,10 +207,21 @@ function replace_oemath_tags(prob, prob_index) {
     /////////////////////
     var my_circles = [];
     var circle_inputs = '';
+    var svg_width = 0;
+    var svg_height = 0;
     
     // '<oemath-svg-500-500>'
-    prob = prob.replace(/<\s*oemath-svg-([^-\s]+)-([^-\s>]+)/g, function(m, $1, $2) {
-        return '<svg width=' +eval($1)+ ' height=' +eval($2);
+    prob = prob.replace(/<\s*oemath-svg\(([^\)]+)\)\s*>/g, function (m, $1) {
+        var prop = parse_prop($1, function(k,v) {
+            if (k == 'width' || k == 'w') {
+                svg_width = eval(v);
+            }
+            else if (k == 'height' || k == 'h') {
+                svg_height = eval(v);
+            }
+            return false;
+        });
+        return '<svg width='+svg_width+' height='+svg_height + ' class="oemath-svg-svg">';
     });
 
     // 'def_circle C#=(200,200,100)' +: define a circle named C#, cx=200, cy=200, radius=100
@@ -241,7 +253,16 @@ function replace_oemath_tags(prob, prob_index) {
         return ret;
     });
 
-    // <svg-circle[(props)] (C#(theta) r=100|C#)>
+    // <svg-rect(props) (x,y)|C#0(theta) (x,y)|C#0(theta)/>
+    prob = prob.replace(/<\s*svg-rect\(?([^\)\s]+)?\)?\s+(\S+)\s+([^>]+)>/g, function(m, $1, $2, $3) {
+        var p1 = parse_position(my_circles, $2);
+        var p2 = parse_position(my_circles, $3.trim());
+        var ret = '<rect x='+p1.x+' y='+p1.y+ ' width='+(p2.x-p1.x)+' height='+(p2.y-p1.y)+' class="oemath-svg" ' + parse_prop($1) +'/>';
+        return ret;
+    });
+
+    // <svg-circle[(props)] C#(theta) r=<radius>> or
+    // <svg-circle[(props)] C#>
     prob = prob.replace(/<\s*svg-circle\(?([^\)\s]+)?\)?\s+([^\s>]+)([^>]*)>/g, function (m, $1, $2, $3) {
         
         var prop = parse_prop($1, function(k, v) {
@@ -262,13 +283,19 @@ function replace_oemath_tags(prob, prob_index) {
             return '<circle cx='+cr.x+' cy='+cr.y+' r='+cr.r + prop+'/>';
         }
     });
-    
 
     // inject circle inputs
-    prob = prob.replace(/(<foreignObject[^>]*>)/g, function(m, $1) {
+    var has_foreign = false;
+    prob = prob.replace(/(<\s*oemath-foreignObject\s*>)/g, function(m, $1) {
+        has_foreign = true;
         return $1 + circle_inputs;
     });
-
+    if (!has_foreign) {
+        prob = prob.replace(/(<\s*\/\s*oemath-svg\s*>)/g, function(m, $1) {
+            return '<oemath-foreignObject>' + circle_inputs + '</oemath-foreignObject>' + $1;
+        });
+    }
+    
     // oemath-image-input tags
     var input_numbers = -1;
 
@@ -290,12 +317,20 @@ function replace_oemath_tags(prob, prob_index) {
         ++input_numbers;
 
         var width = get_prop($3, 'width', DEFAULT_INPUT_RADIUS * 2);
-        var xy = parse_position(my_circles, $2);
+        var xyp = parse_position(my_circles, $2);
+        if (xyp.p) { // It's a polar coordination, find the left top corner
+            xyp.x -= width/2;
+            xyp.y -= DEFAULT_INPUT_RADIUS;
+        }
         return '<input type="text" id="oemath-input-field-' +prob_index+ '-' +input_numbers+ '"' +
                parse_prop($1) +
-               ' style="left:' +(xy.x - width/2)+ 'px; top:' +(xy.y - DEFAULT_INPUT_RADIUS) + 'px; width:' +width+ 'px"' +
+               ' style="left:' +xyp.x+ 'px; top:' +xyp.y + 'px; width:' +width+ 'px"' +
                ' class="oemath-svg-input" placeholder="?"/>';
     });
+
+    prob = prob.replace(/<\s*oemath-foreignObject\s*>/g, '<foreignObject x=0 y=0 width='+svg_width+' height='+svg_height+'>');
+    prob = prob.replace(/<\s*\/\s*oemath-foreignObject\s*>/g, '<\/foreignObject>');
+    prob = prob.replace(/<\s*\/\s*oemath-svg\s*>/g, '<\/svg>');
     
     return [prob, input_numbers + 1];
 }
