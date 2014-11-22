@@ -139,8 +139,8 @@ function show_problem(data, prob_index) {
     // result 0=correct, 1=wrong or 2=skipped
     var problem = makeStruct("desc type answer answer_desc hints hint_level result entered inputs");
     var prob_desc = replace_oemath_tags(prob.problem, prob_index);
-    problem.desc = prob_desc[0];
-    problem.inputs = prob_desc[1]; // number of input (edit box) in the problem.  For problem with type=2.
+    problem.desc = prob_desc.desc;
+    problem.inputs = prob_desc.inputs; // number of input (edit box) in the problem.  For problem with type=2.
     problem.answer = problem.answer_desc = prob.answer.split('$$');
     problem.hints = [];
 //var testStr = problem.desc;

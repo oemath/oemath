@@ -30,6 +30,8 @@ public class JEval {
             
             engine.eval("function cos(x) { return Math.cos(x * Math.PI / 180); }");
             engine.eval("function sin(x) { return Math.sin(x * Math.PI / 180); }");
+            
+            engine.eval("function rand(n) { return ((Math.random() * 100000000) % n) >> 0; }");
         }
         catch (ScriptException se) {
             

@@ -1,6 +1,7 @@
 // constants
 var	DEFAULT_INPUT_RADIUS = 25;
 var DEFAULT_INLINE_INPUT_WIDTH = 30;
+var SVG_MARGIN = 2;
 
 // http://stackoverflow.com/questions/502366/structs-in-javascript
 /*
@@ -183,6 +184,76 @@ function get_prop(str, key, def_value) {
 }
 
 
+function vertical(fml, hint, prob_index, input_numbers) {
+    var hints = hint.split(',');
+    var hint_index = 0;
+
+    var gx=16;
+    var gy=20;
+    var lh = 10;
+    var height = 0;
+    var width = 0;
+    for (var i=0; i<fml.length; i++) {
+        var s = fml[i];
+        height += ((s[0] == '-' || s[0] == '|') ? lh : gy);
+        var w = s.length;
+        width = Math.max(width, s.length);    
+    }
+    width *= gx;
+    
+    var y=0;
+    var svg = '<svg width='+(4+width)+' height='+(4+height)+' class="oemath-svg-vertical"><g transform="translate(2,2)">';
+    var vertical_inputs = '<foreignObject x=0 y=0 width='+width+' height='+height+'>';
+    for (var i=0; i<fml.length; i++) {
+        var s = fml[i];
+        var w = s.length;
+        if (s[0] == '-') {
+            y += 2;
+            var x1 = width - w*gx - gx/4;
+            svg += '<line x1='+x1+' y1='+y+' x2='+width+' y2='+y+' />';
+            y += (lh-2);
+        }
+        else if (s[0] == '|') {
+            y += 2;
+            var x1 = width - (w-1)*gx - gx/4;
+            svg += '<line x1='+x1+' y1='+y+' x2='+width+' y2='+y+' />';
+            svg += '<path d="M '+x1+','+y+' a '+gx/2+' '+(gy*5/4)+' 0 0 1 '+(-gx/2)+','+(gy*6/5)+'" />';
+            y += (lh-2);
+        }
+        else {
+            var x = width - gx/2;
+            for (var j=s.length-1; j>=0; j--) {
+                var c = s[j];
+                if (0 <= c && c <= 9) {
+                    svg += '<text x='+x+' y='+y+'>'+s.charAt(j)+'</text>';
+                }
+                else {
+                    ++input_numbers;
+                    vertical_inputs += '<input type="text" id="oemath-input-field-' +prob_index+ '-' +input_numbers+'" style="left:'+(x-gx/2)+'px;top:'+(y-2)+'px" hint="'+hints[hint_index++]+'" placeholder="'+c+'"/>';
+                }
+                x -= gx;
+            }
+            y += gy;
+        }
+    }
+    vertical_inputs += '</foreignObject>';
+    svg += vertical_inputs+'</g></svg>';
+
+    return { desc: svg, inputs: input_numbers };
+}
+
+function replace_vertical(prob, prob_index, input_numbers) {
+    var inputs = input_numbers;
+    prob = prob.replace(/\s*<\s*oemath-vertical\s+\(([^\)]+)\)\s+\(([^\)]+)\)\s*>/g, function(m, $1, $2) {
+        var desc_inputs = vertical(eval($1), $2, prob_index, input_numbers);
+//    $("#test2").text(desc_inputs);
+        inputs = desc_inputs.inputs;
+        return desc_inputs.desc;
+    });
+    return { desc: prob, inputs: inputs };
+}
+
+
 function replace_oemath_tags(prob, prob_index) {
 	// oemath-image tags
 	prob = replace_oemath_image_tags(prob);
@@ -204,11 +275,13 @@ function replace_oemath_tags(prob, prob_index) {
     
     ///////////////////////
     // oemath-svg tags
-    /////////////////////
+    ///////////////////////
     var my_circles = [];
     var circle_inputs = '';
     var svg_width = 0;
     var svg_height = 0;
+    var translateX = SVG_MARGIN;
+    var translateY = SVG_MARGIN;
     
     // '<oemath-svg-500-500>'
     prob = prob.replace(/<\s*oemath-svg\(([^\)]+)\)\s*>/g, function (m, $1) {
@@ -219,9 +292,17 @@ function replace_oemath_tags(prob, prob_index) {
             else if (k == 'height' || k == 'h') {
                 svg_height = eval(v);
             }
+            else if (k == 'tx' || k == 'translateX' ) {
+                translateX = eval(v);
+            }
+            else if (k == 'ty' || k == 'translateY' ) {
+                translateY = eval(v);
+            }
             return false;
         });
-        return '<svg width='+svg_width+' height='+svg_height + ' class="oemath-svg-svg">';
+
+        return '<svg width=' +(svg_width + 2*translateX)+ ' height='+ (svg_height + 2*translateY) + ' class="oemath-svg-svg">' +
+                '<g transform="translate('+translateX+','+translateY+')">';
     });
 
     // 'def_circle C#=(200,200,100)' +: define a circle named C#, cx=200, cy=200, radius=100
@@ -330,9 +411,12 @@ function replace_oemath_tags(prob, prob_index) {
 
     prob = prob.replace(/<\s*oemath-foreignObject\s*>/g, '<foreignObject x=0 y=0 width='+svg_width+' height='+svg_height+'>');
     prob = prob.replace(/<\s*\/\s*oemath-foreignObject\s*>/g, '<\/foreignObject>');
-    prob = prob.replace(/<\s*\/\s*oemath-svg\s*>/g, '<\/svg>');
+    prob = prob.replace(/<\s*\/\s*oemath-svg\s*>/g, '</g><\/svg>');
     
-    return [prob, input_numbers + 1];
+    
+    var desc_inputs = replace_vertical(prob, prob_index, input_numbers);
+    
+    return { desc: desc_inputs.desc, inputs: desc_inputs.inputs+1 };
 }
 
 

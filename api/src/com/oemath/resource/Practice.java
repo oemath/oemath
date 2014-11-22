@@ -19,7 +19,7 @@ import org.codehaus.jettison.json.JSONObject;
 public class Practice {
 
     final static int PRACTICE_NUMBER = 25;
-    final static int SAMPLE_NUMBER = 3;
+    final static int SAMPLE_NUMBER = 5;
     
     @GET
     @Produces(MediaType.TEXT_PLAIN)
