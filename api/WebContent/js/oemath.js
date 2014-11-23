@@ -3,6 +3,15 @@ var	DEFAULT_INPUT_RADIUS = 25;
 var DEFAULT_INLINE_INPUT_WIDTH = 30;
 var SVG_MARGIN = 2;
 
+var PROB_TYPE_NORMAL = 0;
+var PROB_TYPE_CHOICE = 1;
+var PROB_TYPE_MULTIPLE_ANSWER = 2;
+var PROB_TYPE_SINGLE_ANSWER = 3;
+
+var ANSWER_CORRECT = 0;
+var ANSWER_WRONG = 1;
+var ANSWER_INCOMPLETE = 2;
+
 // http://stackoverflow.com/questions/502366/structs-in-javascript
 /*
 var o = {
@@ -85,27 +94,6 @@ Array.prototype.same = function (array) {
 }
 
 
-function replace_oemath_image_tags(desc) {
-	desc = desc.replace(/\<oemath-image-(\d+)\>/g, '<div class="oemath-problem-image" style="width:$1px">');
-	desc = desc.replace(/\<oemath-image-(\d+)-(\d+)\>/g, '<div class="oemath-problem-image" style="width:$1px; height:$2px">');
-	desc = desc.replace(/\<\/oemath-image\>/g, '<\/div>');
-    return desc;
-}
-
-function replace_input_tags_in_answer(answer) {
-    answer = replace_oemath_image_tags(answer);
-    answer = answer.replace(/\<oemath-input-(\d+)-(\d+)-*(\d*)\(([^\)]*)\)\>/g, function (m, $1, $2, $3, $4) {
-        if ($3) {
-            return '<input type="text" class="oemath-svg-input" style="top:' + $1 + 'px; left:' + $2 + 'px; width:' + $3 + 'px" value="'+$4+'">';
-        }
-        else {
-            return '<input type="text" class="oemath-svg-input" style="top:' + $1 + 'px; left:' + $2 + 'px" value="' + $4 + '">';
-        }
-    });
-
-    return answer;
-}
-
 // polar coordination to cart coordination
 function p2c(centerX, centerY, radius, angleInDegrees) {
     centerX=eval(centerX); centerY=eval(centerY); radius=eval(radius); angleInDegrees=eval(angleInDegrees);
@@ -184,18 +172,17 @@ function get_prop(str, key, def_value) {
 }
 
 
-function vertical(fml, hint, prob_index, input_numbers) {
-    var hints = hint.split(',');
+function vertical(fml, hints, prob_index, input_numbers) {
     var hint_index = 0;
 
     var gx=16;
-    var gy=20;
+    var gy=24;
     var lh = 10;
     var height = 0;
     var width = 0;
     for (var i=0; i<fml.length; i++) {
         var s = fml[i];
-        height += ((s[0] == '-' || s[0] == '|') ? lh : gy);
+        height += ((s[0] == '_' || s[0] == '|') ? lh : gy);
         var w = s.length;
         width = Math.max(width, s.length);    
     }
@@ -207,7 +194,7 @@ function vertical(fml, hint, prob_index, input_numbers) {
     for (var i=0; i<fml.length; i++) {
         var s = fml[i];
         var w = s.length;
-        if (s[0] == '-') {
+        if (s[0] == '_') {
             y += 2;
             var x1 = width - w*gx - gx/4;
             svg += '<line x1='+x1+' y1='+y+' x2='+width+' y2='+y+' />';
@@ -221,17 +208,17 @@ function vertical(fml, hint, prob_index, input_numbers) {
             y += (lh-2);
         }
         else {
-            var x = width - gx/2;
-            for (var j=s.length-1; j>=0; j--) {
-                var c = s[j];
-                if (0 <= c && c <= 9) {
-                    svg += '<text x='+x+' y='+y+'>'+s.charAt(j)+'</text>';
+            var x = width - gx*w + gx/2;
+            for (var j=0; j<w; j++) {
+                var c = s.charAt(j);
+                if ((0 <= c && c <= 9) || c=='+' || c=='-' || c=='x') {
+                    svg += '<text x='+x+' y='+y+'>'+c+'</text>';
                 }
                 else {
                     ++input_numbers;
                     vertical_inputs += '<input type="text" id="oemath-input-field-' +prob_index+ '-' +input_numbers+'" style="left:'+(x-gx/2)+'px;top:'+(y-2)+'px" hint="'+hints[hint_index++]+'" placeholder="'+c+'"/>';
                 }
-                x -= gx;
+                x += gx;
             }
             y += gy;
         }
@@ -245,33 +232,17 @@ function vertical(fml, hint, prob_index, input_numbers) {
 function replace_vertical(prob, prob_index, input_numbers) {
     var inputs = input_numbers;
     prob = prob.replace(/\s*<\s*oemath-vertical\s+\(([^\)]+)\)\s+\(([^\)]+)\)\s*>/g, function(m, $1, $2) {
-        var desc_inputs = vertical(eval($1), $2, prob_index, input_numbers);
-//    $("#test2").text(desc_inputs);
+//        $('#test2').text(eval($2)[1]);
+        var desc_inputs = vertical(eval($1), eval($2), prob_index, input_numbers);
         inputs = desc_inputs.inputs;
         return desc_inputs.desc;
     });
     return { desc: prob, inputs: inputs };
 }
 
-
 function replace_oemath_tags(prob, prob_index) {
-	// oemath-image tags
-	prob = replace_oemath_image_tags(prob);
-
-    // oemath-canvas tags
-    var idx = -1;
-    prob = prob.replace(/<oemath-canvas-(\d+)-(\d+)\s*\/\s*>/g, function(m, $1, $2) {
-    	++idx;
-    	return '<div class="oemath-problem-canvas" id="oemath-problem-canvas-id-'+prob_index+'-'+idx+'" style="width:'+$1+'px; height:'+$2+'px;"></div>';
-    });
     prob = prob.replace(/<oemath-script>/g, '<script type="text/javascript">');
     prob = prob.replace(/<\/oemath-script>/g, '<\/script>');
-    
-    prob = prob.replace(/<oemath-canvas>/g, 'new jsGraphics(document.getElementById("oemath-problem-canvas-id-'+prob_index+'-0"));');
-    prob = prob.replace(/<oemath-canvas-(.+)>/g, 'new jsGraphics(document.getElementById("oemath-problem-canvas-id-'+prob_index+'-$1"));');
-    prob = prob.replace(/<oemath-color>/g, 'new jsColor');
-    prob = prob.replace(/<oemath-pen>/g, 'new jsPen');
-    prob = prob.replace(/<oemath-point>/g, 'new jsPoint');
     
     ///////////////////////
     // oemath-svg tags
