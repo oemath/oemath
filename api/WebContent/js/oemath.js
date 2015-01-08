@@ -3,6 +3,10 @@ var	DEFAULT_INPUT_RADIUS = 25;
 var DEFAULT_INLINE_INPUT_WIDTH = 30;
 var SVG_MARGIN = 2;
 
+var SVG_VERTICAL_CHAR_WIDTH = 32;
+var SVG_VERTICAL_CHAR_HEIGHT = 40;
+
+
 var PROB_TYPE_NORMAL = 0;
 var PROB_TYPE_CHOICE = 1;
 var PROB_TYPE_MULTIPLE_ANSWER = 2;
@@ -11,6 +15,38 @@ var PROB_TYPE_SINGLE_ANSWER = 3;
 var ANSWER_CORRECT = 0;
 var ANSWER_WRONG = 1;
 var ANSWER_INCOMPLETE = 2;
+
+
+function gcd(x, y) {
+    while (y != 0) {
+        var z = x % y;
+        x = y;
+        y = z;
+    }
+    return x;
+}
+
+function F(n) {
+    var f = 1;
+    for (var i=2; i<=n; i++) {
+        f *= i;
+    }
+    return f;
+}
+
+function P(n, m) {
+    var f = 1;
+    for (var i=n-m+1; i<=n; i++) {
+        f *= i;
+    }
+    return f;
+}
+
+function C(n, m) {
+    return P(n, m) / F(m);
+}
+
+
 
 // http://stackoverflow.com/questions/502366/structs-in-javascript
 /*
@@ -56,10 +92,29 @@ function rand(n) {
     return ((Math.random() * 100000000) % n) >> 0;
 }
 
-function shuffle(arr) {
+/*function shuffle(arr) {
     arr.sort(function() {
       return .5 - Math.random();
     });
+}*/
+
+function shuffle(array) {
+	  var currentIndex = array.length, temporaryValue, randomIndex ;
+
+	  // While there remain elements to shuffle...
+	  while (0 !== currentIndex) {
+
+	    // Pick a remaining element...
+	    randomIndex = Math.floor(Math.random() * currentIndex);
+	    currentIndex -= 1;
+
+	    // And swap it with the current element.
+	    temporaryValue = array[currentIndex];
+	    array[currentIndex] = array[randomIndex];
+	    array[randomIndex] = temporaryValue;
+	  }
+
+	  return array;
 }
 
 // attach the .equals method to Array's prototype to call it on any array
@@ -175,8 +230,8 @@ function get_prop(str, key, def_value) {
 function vertical(fml, hints, prob_index, input_numbers) {
     var hint_index = 0;
 
-    var gx=16;
-    var gy=24;
+    var gx = SVG_VERTICAL_CHAR_WIDTH;
+    var gy = SVG_VERTICAL_CHAR_HEIGHT;
     var lh = 10;
     var height = 0;
     var width = 0;
@@ -212,7 +267,7 @@ function vertical(fml, hints, prob_index, input_numbers) {
             for (var j=0; j<w; j++) {
                 var c = s.charAt(j);
                 if ((0 <= c && c <= 9) || c=='+' || c=='-' || c=='x') {
-                    svg += '<text x='+x+' y='+y+'>'+c+'</text>';
+                	vertical_inputs += '<input readonly value="'+c+'" type="text" style="left:'+(x-gx/2)+'px;top:'+(y-2)+'px"/>';//'<text x='+x+' y='+y+'>'+c+'</text>';
                 }
                 else {
                     ++input_numbers;

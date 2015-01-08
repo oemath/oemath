@@ -4,16 +4,25 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
  <display-name>api</display-name>
  <servlet>
-  <display-name>oemath api</display-name>
-  <servlet-name>oemath-api</servlet-name>
+  <display-name>Oemath API</display-name>
+  <servlet-name>OemathApi</servlet-name>
   <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
   <init-param>
    <param-name>com.sun.jersey.config.property.packages</param-name>
    <param-value>com.oemath.resource</param-value>
   </init-param>
  </servlet>
+ <servlet>
+  <display-name>Raw Servlet</display-name>
+  <servlet-name>RawServlet</servlet-name>
+  <servlet-class>com.oemath.resource2.RawHandler</servlet-class>
+ </servlet>
  <servlet-mapping>
-  <servlet-name>oemath-api</servlet-name>
+  <servlet-name>OemathApi</servlet-name>
   <url-pattern>/api/*</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>RawServlet</servlet-name>
+  <url-pattern>/raw/*</url-pattern>
  </servlet-mapping>
 </web-app>

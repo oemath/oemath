@@ -165,7 +165,7 @@ public class Database {
                 prob.pid = rs.getInt("pid");
                 prob.problem = Utils.replaceParameter(rs.getString("problem"), paramMap);
                 prob.type = rs.getInt("type");
-                prob.answer = Utils.replaceParameter(rs.getString("answer"), paramMap);
+                prob.answer = rs.getString("answer");
                 if (prob.answer == null || prob.answer.isEmpty()) {
                     prob.answer = "<ans>";
                 }
@@ -227,4 +227,67 @@ public class Database {
 
         return user;
     }
+
+    ////////////////
+    // internal use
+    ////////////////
+    public static Prob getNextProbFromGradePid(int grade, int pid, String action) {
+        DBConnect dbConn = new DBConnect();
+        
+        String queryStr = "select pid, type, problem, param, answer, hint from prob_g" + grade +" where pid";
+        if ("prev".equals(action)) {
+        	queryStr += "<" + pid  + " order by pid desc limit 1";
+        }
+        else {
+        	if ("next".equals(action)) action = ">"; else action = ">=";
+        	queryStr += action + pid  + " order by pid limit 1";
+        }
+        
+        ResultSet rs = dbConn.execute(queryStr);
+        
+        if (rs == null) {
+            return null;
+        }
+
+        Prob prob = null;
+        try {
+            while (rs.next()) {
+                prob = new Prob();
+                
+                prob.pid = rs.getInt("pid");
+                prob.problem = rs.getString("problem");
+                prob.param = rs.getString("param");
+                prob.type = rs.getInt("type");
+                prob.answer = rs.getString("answer");
+                
+                /*String[] ans = Utils.replaceParameter(prob.answer, paramMap).split("$$");
+                for (int i=0; i<ans.length; i++) {
+                    try {
+                        ans[i] = JEval.getEngine().eval(ans[i]).toString();
+                    }
+                    catch (ScriptException je) {
+                    }
+                    if (i != 0) {
+                        prob.answer += " $$ ";
+                    }
+                    prob.answer = ans[i];
+                }*/
+                        
+                prob.hintList = getHintFromHidLlist(rs.getString("hint"));
+                if (!Utils.isEmpty(prob.hintList)) {
+                    for (Hint hint : prob.hintList) {
+                        hint.desc = hint.desc;
+                    }
+                }
+                break;
+            }
+        }
+        catch (SQLException sqlex) {
+        }
+        
+        return prob;
+    }
+    
+    
+
 }

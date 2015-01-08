@@ -65,12 +65,12 @@
             min-height: 900px;
         }
 
+
     </style>
     
 </head>
 
 <body>
-	<p id="test"></p>
     <div class="update-left">
 	    <div style="float:left">
 	        <label>Pid:</label>
@@ -112,13 +112,13 @@
 		<p id="prob-info">&nbsp;</p>
 	    <button class="btn oemath-btn-color" style="margin-top:20px; margin-left: 10px; width:100px; float:right">Save</button>
 	    <button class="btn oemath-btn-color" id="oemathid-btn-get" style="margin-top:20px; width:100px; float:right" onclick="onclickGet()">Get</button>
-	    <button class="btn oemath-btn-color" style="margin-top:20px; width:50px;">&lt;&lt;</button>
-	    <button class="btn oemath-btn-color" style="margin-top:20px; width:50px;">&gt;&gt;</button>
-	    <button class="btn oemath-btn-color" style="margin-top:20px; margin-left: 15px; width:100px;">New</button>
+	    <button class="btn oemath-btn-color" style="margin-top:20px; width:50px;" onclick="onclickPrev()">&lt;&lt;</button>
+	    <button class="btn oemath-btn-color" style="margin-top:20px; width:50px;" onclick="onclickNext()">&gt;&gt;</button>
+	    <button class="btn oemath-btn-color" style="margin-top:20px; margin-left: 15px; width:100px;" onclick="onclickNew()">New</button>
     </div>
 
     <div class="update-right">
-	    <button class="btn oemath-btn-color" "id="oemathid-btn-refresh" onclick="onclickRefresh()" style="margin0; width:120px;">Refresh</button>
+	    <button class="btn oemath-btn-color" id="oemathid-btn-refresh" onclick="onclickRefresh()" style="margin0; width:120px;">Refresh</button>
 	    <div id="preview-container" style="width:100%">
 	    </div>
     </div>
@@ -134,8 +134,12 @@
 	<script>
 
 		////////////////////////////////////////////////////////////
+		//////////////// start /////////////////////////////////////
 		////////////////////////////////////////////////////////////
 
+		var DEFAULT_PID = 79;
+		var DEFAULT_GRADE = 3;
+		
 /*	    function replaceParameter(value) {
 	        for (var k in paramMap) {
 	            value = value.replace(new RegEx(key, 'g'), paramMap[key]);
@@ -218,23 +222,23 @@
 	    }
 
 		////////////////////////////////////////////////////////////
+		//////////////// end// /////////////////////////////////////
 		////////////////////////////////////////////////////////////
 		
-	
-		function onclickGet() {
+		function retrieve_and_show(action) {
 			var pid = $('#prob-pid').val().trim();
 			var grade = $('#prob-grade').val().trim(); 
-			if (pid == '') pid = 47;
+			if (pid == '') pid = DEFAULT_PID;
 			if (grade == '') {
-				grade = 3;
-				$('#prob-grade').val(3);
+				grade = DEFAULT_GRADE;
+				$('#prob-grade').val(grade);
 			}
 			
-			var url = "http://localhost:8080/api/internal?grade="+grade+"&pid="+pid;
+			var url = "http://localhost:8080/api/internal?grade="+grade+"&pid="+pid+"&action="+action;
 			
 		    $.ajax({
 		        type: "get",
-		        url: "http://localhost:8080/api/internal?grade="+grade+"&pid="+pid,
+		        url: url,
 		        dataType: "json",
 		        data: {},
 		        success: function (data, textStatus, jqXHR) {
@@ -248,6 +252,16 @@
 		            $("#prob-info").text("error:" + url);
 		        },
 		    });
+		}
+	
+		function onclickPrev() {
+			retrieve_and_show('prev');
+		}
+		function onclickGet() {
+			retrieve_and_show('curr');
+		}
+		function onclickNext() {
+			retrieve_and_show('next');
 		}
 
 
@@ -313,6 +327,7 @@
 		    prob.desc = desc_inputs.desc;
 		    prob.inputs = desc_inputs.inputs;
 
+		    prob.ans = raw_prob.ans;
 		    if (raw_prob.ans == null || raw_prob.ans == '') prob.ans = '<ans>';
 	        prob.ans = replace_parameter(prob.ans, param_map);
 
@@ -323,6 +338,7 @@
 			        cg.push(i);
 			    }
 			    shuffle(cg);
+			    prob.choices = [];
 		        for (var i=0; i<ans.length; i++) {
 			        if (ans[i] == 0) {
 				        prob.ans = i;
@@ -343,18 +359,24 @@
 			var container = $(container_id);
 			container.empty(); // clear all children
 
-			var prob_html = '<h1 class="oemath-problem-text">Question</h1><h3 class="oemath-problem-desc">' + prob.desc + '</h3>';
-			
+			var prob_html = '<h1 class="oemath-problem-text">Question</h1>'+
+							'<div class="oemath-problem-area">'+
+								'<h3>' + prob.desc + '</h3>';
+
 	        if (prob.type == PROB_TYPE_CHOICE) {
+				prob_html += '<form class=""oemath-choice-group">';
 	            for (var i = 0; i < prob.choices.length; i++) {
-	                prob_html += '<input expected="' + (i==prob.ans?1:0) + '" onclick="handleClick(this)" type="radio">' + prob.choices[i] + '<br>';
+		            var id = 'oemathid-choice-' + i;
+	                prob_html += '<input id="'+id+'" expected="' + (i==prob.ans?1:0) + '" name="oemath-choice-item" onclick="handleClick(this)" type="radio"><label for="'+id+'" class="oemath-choice-item">' + prob.choices[i] + '</label><br>';
 	            }
+				prob_html += '</form>';
+		        prob_html += '</div>';
 	        }
 	        else if (prob.type == PROB_TYPE_NORMAL) {
-	            prob_html += '<div><h1 class="oemath-answer-text">Answer</h1><input type="text" id="oemath-answer-normal-field" class="form-control oemath-answer-input" placeholder="'+ prob.ans +'"></input></div>';
+		        prob_html += '</div>';
+	            prob_html += '<div><h1 class="oemath-answer-text">Answer</h1><input type="text" id="oemathid-answer-input" class="form-control oemath-answer-input" placeholder="'+ prob.ans +'"></input></div>';
 		    }
 
-	        console.log("prob_html", prob_html);
 		    container.append(prob_html);
 		}
 

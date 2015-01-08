@@ -26,14 +26,15 @@ public class InternalAccess {
     public Response getProblem(
             @Context HttpServletRequest request, 
             @QueryParam("grade") int grade,
-            @QueryParam("pid") int pid) {
+            @QueryParam("pid") int pid,
+            @QueryParam("action") String action) {
 
         int retStatus = 500;
         String retString = "Error";
         
         try {
             JSONObject problem = new JSONObject();
-            Prob prob = Database.getNextProbFromGradePid(grade,  pid);
+            Prob prob = Database.getNextProbFromGradePid(grade, pid, action);
             if (prob != null) {
 	            problem.put("count", 1);
 	            problem.put("pid", prob.pid);

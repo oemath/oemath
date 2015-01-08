@@ -8,6 +8,8 @@ public class Prob {
     
     public String problem;
     
+    public String param;
+    
     public int type;
     
     public String answer;
